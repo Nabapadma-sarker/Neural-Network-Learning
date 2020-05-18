@@ -64,24 +64,33 @@ Theta2_grad = zeros(size(Theta2));
 
 
 X = [ones(rows(X),1) X];
-input_layer_size
-hidden_layer_size
-size(nn_params)
+%y
 %size(X)
-Theta1_Z = [ones(rows(X),1) (X*Theta1')];
+%(X*Theta1')
+z1 = [ones(rows(X), 1) (X*Theta1')];
+%Theta1_Z
 %size(Theta1_Z)
-Theta1_H = sigmoid(Theta1_Z);
-size(Theta1_H)
-Theta2_Z = [ones(rows(Theta1_Z),1) (Theta1_Z*Theta2')];
-Theta2_H = sigmoid(Theta2_Z);
-size(Theta2_H)
-
-size(Theta1_grad)
-size(Theta2_grad)
-for k = 1:num_labels
-  J = J - sum(log(Theta2_H(k)).*y' + (1 - y').*(1 - Theta2_H(k)));
-end
-J = J/m;
+h1 = sigmoid(z1);
+%Theta1_H
+%size(Theta1_H)
+%Theta1_H
+z2 = (z1*Theta2');
+h2 = sigmoid(z2);
+%size(Theta2_H)
+%Theta2_H
+%size(Theta1_grad)
+%size(Theta2_grad)
+size(h2)
+[H, p] = max(h2, [], 2);
+%size(p)
+%p
+Y = zeros(size(y));
+Y = p == y;
+%Y
+%for k = 1:num_labels
+  J = - sum(log(H).*Y + (1 - Y).*log(1 - H));
+%end
+%J = J/m;
 %Theta1_grad = sigmoidGradient(Theta1_Z);
 %Theta2_grad = sigmoidGradient(Theta2_Z);
 %Theta2_grad = (((Theta2_H-y)'*X)'/m);
