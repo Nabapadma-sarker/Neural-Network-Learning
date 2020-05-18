@@ -67,29 +67,43 @@ X = [ones(rows(X),1) X];
 %y
 %size(X)
 %(X*Theta1')
-z1 = [ones(rows(X), 1) (X*Theta1')];
+z1 = X*Theta1';
 %Theta1_Z
 %size(Theta1_Z)
-h1 = sigmoid(z1);
+a1 = sigmoid(z1);
+a1 = [ones(rows(a1),1) a1];
 %Theta1_H
 %size(Theta1_H)
 %Theta1_H
-z2 = (z1*Theta2');
+z2 = a1*Theta2';
 h2 = sigmoid(z2);
 %size(Theta2_H)
 %Theta2_H
 %size(Theta1_grad)
 %size(Theta2_grad)
-size(h2)
-[H, p] = max(h2, [], 2);
+%size(h2)
+%h2(1:10,:)
+%[H, p] = max(h2, [], 2);
+%H(1:10,:)
+%p(1:10,:)
+%y(1:10,:)
+H = sigmoid(h2);
+%H(1:10,:)
 %size(p)
 %p
-Y = zeros(size(y));
-Y = p == y;
+Y = zeros(size(h2));
+size(Y)
+for c = 1:m
+  Y(c, y(c,:)) = 1;
+  %y(c,:)
+end
+
+%y(1:50,:)
+Y(4800:5000,:)
 %Y
-%for k = 1:num_labels
-  J = - sum(log(H).*Y + (1 - Y).*log(1 - H));
-%end
+for k = 1:num_labels
+  J = J - sum(log(H(:,k)).*Y(:,k) + (1 - Y(:,k)).*log(1 - H(:,k)));
+end
 %J = J/m;
 %Theta1_grad = sigmoidGradient(Theta1_Z);
 %Theta2_grad = sigmoidGradient(Theta2_Z);
