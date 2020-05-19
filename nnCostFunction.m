@@ -64,56 +64,42 @@ Theta2_grad = zeros(size(Theta2));
 
 
 X = [ones(rows(X),1) X];
-%y
-%size(X)
-%(X*Theta1')
 z1 = X*Theta1';
-%Theta1_Z
-%size(Theta1_Z)
 a1 = sigmoid(z1);
 a1 = [ones(rows(a1),1) a1];
-%Theta1_H
-%size(Theta1_H)
-%Theta1_H
 z2 = a1*Theta2';
 h2 = sigmoid(z2);
-%size(Theta2_H)
-%Theta2_H
-%size(Theta1_grad)
-%size(Theta2_grad)
-%size(h2)
-%h2(1:10,:)
-%[H, p] = max(h2, [], 2);
-%H(1:10,:)
-%p(1:10,:)
-%y(1:10,:)
-H = sigmoid(h2);
-%H(1:10,:)
-%size(p)
-%p
 Y = zeros(size(h2));
-size(Y)
 for c = 1:m
-  Y(c, y(c,:)) = 1;
-  %y(c,:)
+  Y(c, y(c)) = 1;
+end
+  
+  J = - sum(sum(log(h2).*Y + (1 - Y).*log(1 - h2)))/m;
+  regularize = (lambda*(sum(sum(Theta1(:,2:end).^2))+sum(sum(Theta2(:,2:end).^2))))/(2*m);
+  J = J + regularize;
+
+%%Backpropagation%%
+for t = 1:m
+  a1 = X(t,:)';
+  z2 = Theta1*a1;
+  a2 = sigmoid(z2);
+  a2 = [1; a2];
+  z3 = Theta2*a2;
+  a3 = sigmoid(z3);
+  yy = zeros(num_labels,1);
+
+  yy(y(t)) = 1;
+  d3 = a3 - yy;
+  d2 = (Theta2'*d3) .*[1; sigmoidGradient(z2)];
+  d2 = d2(2:end);
+  
+  Theta1_grad = Theta1_grad + d2*a1'; %[25,1]*[1,401]
+  Theta2_grad = Theta2_grad + d3*a2'; %[10,1]*[1,26]
+
 end
 
-%y(1:50,:)
-Y(4800:5000,:)
-%Y
-for k = 1:num_labels
-  J = J - sum(log(H(:,k)).*Y(:,k) + (1 - Y(:,k)).*log(1 - H(:,k)));
-end
-%J = J/m;
-%Theta1_grad = sigmoidGradient(Theta1_Z);
-%Theta2_grad = sigmoidGradient(Theta2_Z);
-%Theta2_grad = (((Theta2_H-y)'*X)'/m);
-
-
-
-
-
-
+Theta1_grad = Theta1_grad/m + (lambda/m)*[zeros(rows(Theta1), 1) Theta1(:,2:end)];
+Theta2_grad = Theta2_grad/m + (lambda/m)*[zeros(rows(Theta2), 1) Theta2(:,2:end)];
 
 
 
